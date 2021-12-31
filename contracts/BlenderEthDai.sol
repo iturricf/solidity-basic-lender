@@ -6,17 +6,21 @@ contract BlenderEthDai {
     event CollateralAdded(address sender, uint value, uint balance);
     event PriceUpdated(uint previousPrice, uint newPrice);
 
-    uint borrow_apr = 700;
+    uint public borrow_apr = 700;
     uint public asset_price = 4000;
 
     mapping (address => uint256) public collateral;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, 'Not Owner');
+        _;
+    }
 
     constructor() {
         owner = payable(msg.sender);
     }
 
-    function update_price(uint _price) public {
-        require(msg.sender == owner);
+    function update_price(uint _price) public onlyOwner {
         uint previousPrice = asset_price;
         asset_price = _price;
         emit PriceUpdated(previousPrice, asset_price);
